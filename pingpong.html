@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>PingPong</title>
+	<style>
+		body {
+			background: #000;}
+		
+		canvas {
+			background: #a0a0a0; 
+			margin: auto; 
+			position: absolute; 
+			top: 0;
+		    bottom: 0;
+		    left: 0;
+		    right: 0; }
+	
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<canvas id="canvas" width="700" height="500"></canvas>
+	</div>
+</body>
+<script>
+	var canvas = document.getElementById("canvas");
+	var k = canvas.getContext("2d");
+
+	var x = canvas.width/2;
+	var y = canvas.height/2;
+	var dx = 5;
+	var dy = -5;
+	ballRadius = 10;
+
+	function drawBall() {
+		k.beginPath();
+		k.arc(x,y,ballRadius,0,Math.PI*2);
+		k.fillStyle = "#fff";
+		k.fill();
+		k.closePath();
+	}
+
+	// function drawBallShadow(frames) {
+	// 	var a = 1;
+	// 	for (i=0;i<frames;i++) {
+	// 		k.beginPath();
+	// 		k.arc(x-dx*i,y-dy*i,ballRadius,0,Math.PI*2);
+	// 		k.fillStyle = "rgba(255, 165, 0," + a/i + ")";
+	// 		k.fill();
+	// 		k.closePath();
+	// 	}
+	// }
+
+	function draw() {
+		k.clearRect(0,0,canvas.width,canvas.height);
+		// drawBallShadow(20);
+		drawBall();
+		
+		x += dx;
+		y += dy;
+
+		if (x < ballRadius || x > canvas.width-ballRadius) {
+			dx = -dx;
+		}
+	
+		if (y < ballRadius || y > canvas.height-ballRadius) {
+			dy = -dy;
+		}
+
+		requestAnimationFrame(draw);
+	}
+
+	draw();
+
+</script>
+</html>
