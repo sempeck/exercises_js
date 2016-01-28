@@ -24,18 +24,47 @@
 	</div>
 </body>
 <script>
+(function(){
 	var canvas = document.getElementById("canvas");
 	var k = canvas.getContext("2d");
-
+	
+	var ballRadius = 10;
+	var paddleWidth = 20;
+	var paddleHeight = 70;
+	
+	var paddleLeftY = (canvas.height-paddleHeight)/2;
+	var paddleRightY = (canvas.height-paddleHeight)/2; 
+	var paddleLeftX = 10;
+	var paddleRightX = canvas.width-10-paddleWidth;
+	
 	var x = canvas.width/2;
 	var y = canvas.height/2;
 	var dx = 5;
 	var dy = -5;
-	ballRadius = 10;
+
+	var upPressed = false;
+	var downPressed = false;
 
 	function drawBall() {
 		k.beginPath();
 		k.arc(x,y,ballRadius,0,Math.PI*2);
+		k.fillStyle = "#fff";
+		k.fill();
+		k.closePath();
+	}
+
+	function drawPaddle(leftRight) {
+			if (leftRight == "left") {
+				var drawX = paddleLeftX;
+				var drawY = paddleLeftY;
+			}
+    		else {
+    			var drawX = paddleRightX;
+    			var drawY = paddleRightY;
+    			}
+
+		k.beginPath();
+		k.rect(drawX, drawY,paddleWidth,paddleHeight);
 		k.fillStyle = "#fff";
 		k.fill();
 		k.closePath();
@@ -56,7 +85,10 @@
 		k.clearRect(0,0,canvas.width,canvas.height);
 		// drawBallShadow(20);
 		drawBall();
-		
+		drawPaddle("left");
+		drawPaddle("right");
+		collisionDetection();
+
 		x += dx;
 		y += dy;
 
@@ -67,11 +99,55 @@
 		if (y < ballRadius || y > canvas.height-ballRadius) {
 			dy = -dy;
 		}
+// sterowanie lewym
+		if (downPressed && paddleLeftY < canvas.height-paddleHeight) {
+			paddleLeftY += 7;
+		}
 
-		requestAnimationFrame(draw);
+		else if (upPressed && paddleLeftY > 0) {
+			paddleLeftY -= 7;
+		}
+
+	requestAnimationFrame(draw);
 	}
 
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+	document.addEventListener("mousemove", mouseMoveHandler, false);
+
+	function keyDownHandler(e){
+		if(e.keyCode == 38) {
+			upPressed = true;
+		}
+		else if(e.keyCode == 40) {
+			downPressed = true;
+		}
+	}
+
+	function keyUpHandler(e) {
+		if(e.keyCode == 38) {
+			upPressed = false;
+		}
+		else if(e.keyCode == 40) {
+			downPressed = false;
+		}
+	}
+
+// sterowanie prawym
+	function mouseMoveHandler(e) {
+		var relativeY = e.clientY - canvas.offsetTop;
+		if (relativeY > 0 && relativeY < canvas.height) {
+			paddleRightY = relativeY;
+		}
+	}
+
+	function collisionDetection() {
+		if ((x > paddleLeftX && x < paddleLeftX+paddleWidth && y > paddleLeftY && y < paddleLeftY+paddleHeight) || (x > paddleRightX && x < paddleRightX + paddleWidth && y > paddleRightY && y < paddleRightY + paddleHeight))
+				dx = -dx;	
+		}
+
 	draw();
+})();
 
 </script>
 </html>
